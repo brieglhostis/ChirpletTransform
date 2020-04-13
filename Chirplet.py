@@ -59,3 +59,30 @@ class Chirplet:
         ending_frequency = self.fc + self.c*(ending_time-self.tc)
         return starting_frequency, ending_frequency
 
+    def derive_transform_wrt_tc(self, f):
+        t = np.arange(self.length)/self.sampling_rate
+        d_chirplet = ((t-self.tc)/(self.dt**2) - 4.j*np.pi*self.c*(t-self.tc) - 1.j*self.wc) * self.chirplet  # Derivative of the  chirplet wrt tc
+        d_scalar_product = np.vdot(f, d_chirplet)  # Derivative of the scalar product between f and the chirplet wrt tc
+        scalar_product = self.chirplet_transform(f)
+        d_transform = (d_scalar_product * np.conj(scalar_product) + scalar_product * np.conj(d_scalar_product))/(2*np.abs(scalar_product))  # Derivative of the magnitude of the scalar product (i.e. the chirplet transform) wrt tc
+
+        return d_transform
+
+    def derive_transform_wrt_fc(self, f):
+        t = np.arange(self.length)/self.sampling_rate
+        d_chirplet = 2.j*np.pi*(t-self.tc) * self.chirplet  # Derivative of the  chirplet wrt fc
+        d_scalar_product = np.vdot(f, d_chirplet)  # Derivative of the scalar product between f and the chirplet wrt fc
+        scalar_product = self.chirplet_transform(f)
+        d_transform = (d_scalar_product * np.conj(scalar_product) + scalar_product * np.conj(d_scalar_product))/(2*np.abs(scalar_product))  # Derivative of the magnitude of the scalar product (i.e. the chirplet transform) wrt fc
+
+        return d_transform
+
+    def derive_transform_wrt_c(self, f):
+        t = np.arange(self.length)/self.sampling_rate
+        d_chirplet = 2j*np.pi*np.power(t-self.tc, 2) * self.chirplet  # Derivative of the  chirplet wrt c
+        d_scalar_product = np.vdot(f, d_chirplet)  # Derivative of the scalar product between f and the chirplet wrt c
+        scalar_product = self.chirplet_transform(f)
+        d_transform = (d_scalar_product * np.conj(scalar_product) + scalar_product * np.conj(d_scalar_product))/(2*np.abs(scalar_product))  # Derivative of the magnitude of the scalar product (i.e. the chirplet transform) wrt c
+
+        return d_transform
+
