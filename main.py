@@ -14,7 +14,7 @@ def test():
     chirplet.plot_wigner_distribution()
 
     act = ACT(chirplet.chirplet, sampling_rate=sampling_rate, P=1)
-    print(act.act_greedy(tc=1.5, dt=2, gaussian_chirplet=True))
+    print(act.act_greedy(tc=1.5, dt=2))
     act.plot_wigner_distribution()
 
 if __name__=="__main__":
