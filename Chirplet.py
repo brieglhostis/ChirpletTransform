@@ -37,10 +37,22 @@ class Chirplet:
         return 2 * np.exp(-np.power((t/k-self.tc)/self.dt, 2)
                           - np.power(2*np.pi*self.dt*(f - self.fc - 2 * self.c * (t-self.tc)), 2))
 
-    def plot_chirplet(self):
+    def plot_chirplet(self, show=True, label=None, title=None, normalize=False, offset=0):
         t = np.arange(self.length)/self.sampling_rate
-        plt.plot(t, np.real(self.chirplet))
-        plt.show()
+        chirplet = np.real(self.chirplet)
+        if normalize:
+            chirplet = (chirplet-np.mean(chirplet))/np.max(chirplet-np.mean(chirplet))
+        if isinstance(label, str):
+            plt.plot(t, offset + chirplet, label=label)
+            plt.legend()
+        else:
+            plt.plot(t, offset + chirplet)
+        if isinstance(title, str):
+            plt.title(title)
+        if show:
+            plt.xlabel("Time [sec]")
+            plt.ylabel("Magnitude")
+            plt.show()
 
     def plot_wigner_distribution(self, k=4):
         distribution = self.wigner_distribution(k=k)
@@ -48,8 +60,8 @@ class Chirplet:
         plt.figure()
         plt.imshow(distribution, cmap="gray", extent=(0, self.length/self.sampling_rate, 0, self.sampling_rate/2),
                    aspect=2*self.length/(self.sampling_rate**2))
-        plt.xlabel("Time t [sec]")
-        plt.ylabel("Frequency f [Hz]")
+        plt.xlabel("Time [sec]")
+        plt.ylabel("Frequency [Hz]")
         plt.show()
 
     def get_starting_and_ending_frequencies(self):
